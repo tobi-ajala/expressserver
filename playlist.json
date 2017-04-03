@@ -1,0 +1,28 @@
+
+[
+    {
+        "contentType" : "advert",
+        "src" : "http://cdn.http.anno.test.channel4.com/m/1/174055/7/2047111/MUM-HATD170-020_1462888808_93626_17.mp4",
+        "type" : "video/mp4"
+    },
+    {
+        "contentType" : "advert",
+        "src" : "http://cdn.http.anno.test.channel4.com/m/1/174055/78/1340110/CH4_31_02_50_GRY_BHFN133_040_001_93614_17.mp4",
+        "type" : "video/mp4"
+    },
+    {
+        "contentType" : "advert",
+        "src" : "http://cdn.http.anno.test.channel4.com/m/1/174055/77/1340109/CH4_31_02_50_AMV_SYPR030_030_001_93613_17.mp4",
+        "type" : "video/mp4"
+    },
+    {
+        "contentType" : "advert",
+        "src" : "http://cdn.http.anno.test.channel4.com/m/1/174055/110/1858926/CH4_31_02_50_CH4154DGGEN00021I01_002_1462888026_93623_17.mp4",
+        "type" : "video/mp4"
+    },
+    {
+        "contentType" : "mainContent",
+        "src" : "http://rdmedia.bbc.co.uk/dash/ondemand/bbb/2/client_manifest-common_init.mpd",
+        "type" : "application/dash+xml"
+    }
+]
