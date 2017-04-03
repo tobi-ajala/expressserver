@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="http://cdn.dashjs.org/latest/dash.all.min.js"></script> <!-- only needed on PCs -->
+        <script src="socket.io.js" charset="utf-8"></script> <!-- needed for sockets io to be able to detect the client -->
+        <script src="test.js"></script>
+        <meta charset="utf-8">
+        <title>{{title}}</title> <!-- placeholder for the title that is passed to hbs -->
+        <style media="screen">
+            * {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+
+
+        <video id="mVid-mainContent" poster="bground.jpg" display="none">
+            <source id="mVid-mainContent-source" src="" type="" preload="auto" loop="true"></source>
+        </video>
+
+        <script type="text/javascript">
+            // media events
+            var server_log, server_glob, videoArray = [{"MediaState": []}];
+
+            // joins the media events into a 'glob' that can be sent every few seconds
+            server_glob = function(t, v) {
+                console.log(t, v);
+                videoArray[0]["MediaState"][t] = v;
+            }
+
+            server_log = function() {
+                var out = "";
+                // Serialize videoArray
+                for (var i = 0; i < Object.values(videoArray[0]["MediaState"]).length; i++) {
+                    var key = Object.keys(videoArray[0]["MediaState"])[i];
+                    var value = JSON.stringify(videoArray[0]["MediaState"][key]);
+                    out += key + "=" + value + "&";
+                }
+
+                // send a xhr/ajax POST request with the serialized media events
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/tel", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // this is my favourite format of POST request, looks alot like JSON
+                xhttp.send(out);
+            }
+            var logging = setInterval(server_log, 2000); // only send the data every two seconds
+
+            var v = document.getElementById('video');
+            var abort=0, canplay=0, canplaythrough=0, ended=0, emptied=0, encrypted=0, loadedata=0, loadedmetadata=0, play=0, pause=0, playing=0, progress=0, seeked=0, stalled=0, suspend=0, waiting=0;
+
+            // listen for events in the main video object, increment and send
+            v.onabort = function() {
+                ++abort;
+                server_glob("abort", ''+abort);
+            }
+            v.oncanplay = function() {
+                ++canplay;
+                server_glob("canplay", ''+canplay);
+            }
+            v.oncanplaythrough = function() {
+                ++canplaythrough;
+                server_glob("canplaythrough", ''+canplaythrough);
+            }
+            v.ondurationchange = function() {
+                server_glob("durationchange", ''+v.duration);
+            }
+            v.onemptied = function() {
+                ++emptied;
+                server_glob("emptied", ''+emptied);
+            }
+            v.onencrypted = function() {
+                ++encrypted;
+                server_glob("encrypted", ''+encrypted);
+            }
+            v.onended = function() {
+                ++ended;
+                server_glob("ended", ''+ended);
+            }
+            v.onerror = function() {
+                server_glob("error", ''+v.error.code);
+            }
+            v.onloadeddata = function() {
+                ++loadeddata;
+                server_glob("loaddata", ''+loadeddata);
+            }
+            v.onloadedmetadata = function() {
+                ++loadedmetadata;
+                server_glob("loadedmetadata", ''+loadedmetadata);
+            }
+            v.onloadstart = function() {
+                server_glob("source", ''+v.currentSrc);
+            }
+            v.onpause = function() {
+                ++pause;
+                server_glob("pause", ''+pause);
+            }
+            v.onplay = function() {
+                ++play;
+                server_glob("play", ''+play);
+            }
+            v.onplaying = function() {
+                ++playing;
+                server_glob("playing", ''+playing);
+            }
+            v.onprogress = function() {
+                ++progress;
+                server_glob("progress", ''+progress);
+            }
+            v.onratechange = function() {
+                server_glob("ratechange", ''+v.playbackRate);
+            }
+            v.onseeked = function() {
+                ++seeked;
+                server_glob("seeked", ''+seeked);
+            }
+            v.onseeking = function() {
+                server_glob("seeking", ''+v.currentTime);
+            }
+            v.onstalled = function() {
+                ++stalled;
+                server_glob("stalled", ''+stalled);
+            }
+            v.onsuspend = function() {
+                ++suspend;
+                server_glob("suspend", ''+suspend);
+            }
+            v.ontimeupdate = function() {
+                server_glob("timeupdate", ''+v.currentTime);
+            }
+            v.onvolumechange = function() {
+                server_glob("volumechange", ''+v.volume);
+            }
+            v.onwaiting = function() {
+                ++waiting;
+                server_glob("waiting", ''+waiting);
+            }
+        </script>
+        <script type="text/javascript">
+        // sockets io
+            (function() {
+                // create the socket
+                var socket = io.connect();
+
+                // listen for pause events from server
+                socket.on('pause', function() {
+                    var v = document.getElementById('video');
+                    v.pause();
+                });
+
+                // listen for play events from server
+                socket.on('play', function() {
+                    var v = document.getElementById('video');
+                    v.play();
+                });
+            }());
+        </script>
+    </body>
+</html>
